@@ -1,0 +1,947 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+#root {
+  max-width: 480px;
+  margin: 0 auto;
+  background: #f5f5f5;
+}
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #f5f5f5;
+}
+
+.main-shell {
+  height: 100dvh;
+  max-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: #f5f5f5;
+}
+
+/* 顶栏：与页面 Card 一致的浅色卡片，避免整屏强渐变与内容区割裂 */
+.app-header {
+  flex-shrink: 0;
+  z-index: 200;
+  padding: calc(6px + env(safe-area-inset-top, 0px)) 12px 8px;
+  background: #f5f5f5;
+}
+
+.app-header-surface {
+  position: relative;
+  background: #fff;
+  border: 1px solid #ebebeb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 10px 12px 10px;
+  overflow: hidden;
+}
+
+.app-header-surface::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1677ff 0%, #4d9fff 55%, #69b1ff 100%);
+}
+
+.app-header-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.app-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.app-header-logo {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #e8f3ff 0%, #d6e8ff 100%);
+  box-shadow:
+    0 1px 4px rgba(22, 119, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.app-header-titles h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  color: #1f1f1f;
+}
+
+.app-header-tagline {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #8c8c8c;
+  max-width: none;
+}
+
+.app-header-actions {
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.app-header-user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 112px;
+  padding: 5px 8px;
+  border: 1px solid #e8e8e8;
+  border-radius: 999px;
+  background: #f7f9fc;
+  color: #262626;
+  font-size: 12px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-header-user:active {
+  background: #eef2f8;
+}
+
+.app-header-user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #e6f4ff;
+}
+
+.app-header-user-icon {
+  color: #1677ff;
+  font-size: 15px;
+}
+
+.app-header-user-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-header-btn-ghost {
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1677ff;
+  border: 1px solid #d4e4ff;
+  border-radius: 999px;
+  background: #f0f7ff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-header-btn-ghost:active {
+  background: #e6f2ff;
+}
+
+.app-header-current {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #666;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+
+.app-header-current-label {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #e6f4ff;
+  color: #1677ff;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.app-header-current strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.app-header-current-dot {
+  color: #bfbfbf;
+}
+
+.app-header-current-desc {
+  color: #8c8c8c;
+  font-size: 11px;
+}
+
+.main-outlet {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabbar-fixed {
+  flex-shrink: 0;
+  z-index: 200;
+  background: #fff;
+  border-top: 1px solid #e8e8e8;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.page {
+  flex: 0 1 auto;
+  min-height: min-content;
+  background: #f5f5f5;
+}
+
+/* 缺陷记录：占满主区域高度，仅列表滚动 */
+.page.defect-page--layout {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.defect-page-toolbar {
+  flex-shrink: 0;
+  padding: 12px 12px 10px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.defect-toolbar-search-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* 根节点 adm-search-bar 无圆角，勿在外层加 border，否则会出现「外圈方框」 */
+.defect-toolbar-search-row .defect-search-bar-main.adm-search-bar {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.defect-toolbar-search-row .defect-search-bar-main.adm-search-bar:focus-within {
+  outline: none;
+  box-shadow: none;
+}
+
+.defect-toolbar-search-row .defect-search-bar-main.adm-search-bar .adm-search-bar-input-box {
+  font-size: 15px;
+  border-color: #e8eaed !important;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.defect-toolbar-search-row .defect-search-bar-main.adm-search-bar:focus-within .adm-search-bar-input-box,
+.defect-toolbar-search-row .defect-search-bar-main.adm-search-bar.adm-search-bar-active .adm-search-bar-input-box {
+  border-color: #b7c4ff !important;
+  box-shadow: 0 2px 10px rgba(22, 119, 255, 0.12);
+}
+
+.defect-toolbar-search-row .defect-search-bar-main .adm-input-element:focus {
+  outline: none;
+}
+
+.defect-toolbar-filter-btn.adm-button {
+  flex-shrink: 0;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-weight: 500;
+  align-self: stretch;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+.defect-toolbar-filter-btn.adm-button:focus-visible {
+  outline: 2px solid rgba(22, 119, 255, 0.35);
+  outline-offset: 2px;
+}
+
+/* 缺陷记录：项目 + 设备同一行 */
+.defect-toolbar-picks-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: stretch;
+}
+
+.defect-toolbar-picks-row .defect-pick-btn.adm-button {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.3;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  text-align: left;
+  height: auto;
+}
+
+.defect-pick-btn__k {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: #8c8c8c;
+  letter-spacing: 0.02em;
+  margin-bottom: 2px;
+}
+
+.defect-pick-btn__v {
+  display: block;
+  font-weight: 600;
+  color: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.defect-toolbar-picks-row .defect-pick-btn--project.adm-button {
+  background: linear-gradient(180deg, #ffffff 0%, #f6f8fc 100%);
+  border-color: #d0d9e8 !important;
+  color: #1f2937;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.defect-toolbar-picks-row .defect-pick-btn--project.adm-button:active {
+  background: #eef2f8;
+  border-color: #b8c5da !important;
+}
+
+.defect-toolbar-picks-row .defect-pick-btn--project .defect-pick-btn__k {
+  color: #64748b;
+}
+
+.defect-toolbar-picks-row .defect-pick-btn--equipment.adm-button {
+  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.28);
+}
+
+.defect-toolbar-picks-row .defect-pick-btn--equipment.adm-button:not(:disabled) .defect-pick-btn__k {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.defect-toolbar-picks-row .defect-pick-btn--equipment.adm-button:not(:disabled) .defect-pick-btn__v {
+  color: #fff;
+}
+
+.defect-toolbar-picks-row .defect-pick-btn--equipment.adm-button:disabled {
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+.defect-search-bar-popup.adm-search-bar {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.defect-search-bar-popup.adm-search-bar .adm-search-bar-input-box {
+  border-color: #e8ecf2 !important;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.75);
+}
+
+.defect-search-bar-popup.adm-search-bar.adm-search-bar-active .adm-search-bar-input-box {
+  border-color: #d4dce6 !important;
+}
+
+.defect-search-bar-popup .adm-input-element:focus {
+  outline: none;
+}
+
+.defect-page-list-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.defect-page-list-pad {
+  padding: 10px 12px 24px;
+}
+
+.defect-page-list-pad .list-stack {
+  margin-top: 0;
+}
+
+.page-pad {
+  padding: 12px 12px 24px;
+}
+
+.page-loading,
+.page-pad .page-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40vh;
+}
+
+.muted {
+  color: #999;
+  font-size: 13px;
+}
+
+.block-card {
+  margin-top: 12px;
+}
+
+.device-overview-card-extra {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.device-overview-card.device-overview-card--active {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.device-overview-card.device-overview-card--active:active {
+  opacity: 0.92;
+}
+
+.device-overview-extra {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: #1677ff;
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.device-overview-extra svg {
+  font-size: 14px;
+}
+
+.device-brief {
+  line-height: 1.6;
+}
+
+.defect-swiper-img {
+  width: 100%;
+  height: 200px;
+  background: #111;
+}
+
+.stat-total {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1677ff 0%, #4d9fff 48%, #69b1ff 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(22, 119, 255, 0.22);
+}
+
+.stat-total-label {
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.stat-total-num {
+  font-size: 36px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.stat-total-num .unit {
+  font-size: 14px;
+  margin-left: 4px;
+  font-weight: 400;
+}
+
+.stat-bar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.stat-bar-val {
+  font-weight: 600;
+}
+
+.stat-bar-val.warn {
+  color: #d48806;
+}
+
+.stat-bar-val.danger {
+  color: #cf1322;
+}
+
+.home-ng-pie-wrap {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.home-ng-pie-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0 4px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.home-ng-pie-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.home-ng-pie-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.home-ng-pie-legend-name {
+  flex: 1;
+  min-width: 0;
+  color: #333;
+}
+
+.home-ng-pie-legend-val {
+  font-weight: 600;
+  color: #1677ff;
+  flex-shrink: 0;
+}
+
+.chart-placeholder {
+  padding: 24px 8px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.list-stack {
+  margin-top: 12px;
+}
+
+.record-card {
+  margin-bottom: 10px;
+}
+
+.record-card:active {
+  opacity: 0.92;
+}
+
+.record-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.record-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.record-meta {
+  margin-top: 4px;
+  word-break: break-all;
+}
+
+.record-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* —— 机器管理：四态底色 + 空闲/检测中 WiFi 条 —— */
+.machine-card-shell {
+  margin-bottom: 12px;
+  border-radius: 12px;
+  padding: 1px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.machine-card-shell .machine-card-inner.adm-card {
+  border: none;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.92);
+  --adm-color-border: transparent;
+}
+
+.machine-card-shell--offline {
+  background: linear-gradient(135deg, #434343 0%, #737373 42%, #a3a3a3 100%);
+}
+
+.machine-card-shell--offline .machine-card-inner.adm-card {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.machine-card-shell--offline .machine-card-meta,
+.machine-card-shell--offline .muted {
+  color: rgba(255, 255, 255, 0.78) !important;
+}
+
+.machine-card-shell--error {
+  background: linear-gradient(135deg, #a8071a 0%, #cf1322 40%, #ff7875 100%);
+}
+
+.machine-card-shell--error .machine-card-inner.adm-card {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.machine-card-shell--error .machine-card-meta,
+.machine-card-shell--error .muted {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.machine-card-shell--idle {
+  background: linear-gradient(135deg, #d46b08 0%, #fa8c16 45%, #ffc069 100%);
+}
+
+.machine-card-shell--idle .machine-card-inner.adm-card {
+  background: rgba(255, 255, 255, 0.18);
+  color: #262626;
+}
+
+.machine-card-shell--idle .machine-card-meta,
+.machine-card-shell--idle .muted {
+  color: rgba(0, 0, 0, 0.55) !important;
+}
+
+.machine-card-shell--detect {
+  background: linear-gradient(135deg, #0958d9 0%, #1677ff 48%, #69b1ff 100%);
+}
+
+.machine-card-shell--detect .machine-card-inner.adm-card {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+.machine-card-shell--detect .machine-card-meta,
+.machine-card-shell--detect .muted {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.machine-card-shell--default {
+  background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 55%, #f5f5f5 100%);
+}
+
+.machine-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+}
+
+.machine-card-name {
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.machine-card-status-line {
+  margin-bottom: 8px;
+}
+
+.machine-card-status-tag {
+  font-weight: 500;
+}
+
+.machine-card-shell--offline .machine-card-status-tag,
+.machine-card-shell--error .machine-card-status-tag,
+.machine-card-shell--detect .machine-card-status-tag {
+  --adm-color-primary: rgba(255, 255, 255, 0.95);
+  color: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.55) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.machine-card-shell--idle .machine-card-status-tag {
+  border-color: rgba(212, 107, 8, 0.45) !important;
+  color: #ad4e00 !important;
+  background: rgba(255, 255, 255, 0.55) !important;
+}
+
+.wifi-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+  height: 16px;
+  padding-bottom: 1px;
+}
+
+.wifi-bar {
+  display: block;
+  width: 4px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.12);
+  align-self: flex-end;
+}
+
+.machine-card-shell--offline .wifi-bar,
+.machine-card-shell--error .wifi-bar,
+.machine-card-shell--detect .wifi-bar {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.wifi-bar--on.wifi-bar--idle {
+  background: #ad4e00;
+}
+
+.wifi-bar--on.wifi-bar--detect {
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.wifi-bar--idle:not(.wifi-bar--on) {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.wifi-bar--detect.wifi-bar--on {
+  background: #fff;
+}
+
+.wifi-bar--detect:not(.wifi-bar--on) {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.detail-dialog {
+  text-align: left;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.detail-img {
+  width: 100%;
+  margin-top: 12px;
+  border-radius: 8px;
+}
+
+.defect-image-viewer-footer {
+  padding: 8px 16px 4px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.defect-image-viewer-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.defect-image-viewer-meta {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.defect-image-viewer-dot {
+  margin: 0 4px;
+  opacity: 0.7;
+}
+
+.defect-image-viewer-sn {
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.75;
+  word-break: break-all;
+}
+
+.defect-image-viewer-more {
+  margin-top: 12px;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.55) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.filter-popup-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.filter-hint {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.filter-label {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* 缺陷「更多筛选」弹层：防止 Selector / 内容横向溢出 */
+.defect-filter-popup-body {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.defect-filter-popup-body .adm-selector {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.defect-filter-popup-body .adm-selector-item {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.defect-filter-popup-inner {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.login-shell-header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  z-index: 150;
+  box-sizing: border-box;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 12px;
+  background: linear-gradient(135deg, #1677ff 0%, #4d9fff 48%, #69b1ff 100%);
+  color: #fff;
+  box-shadow: 0 6px 22px rgba(22, 119, 255, 0.28);
+}
+
+.login-shell-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.login-shell-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(200, 225, 255, 0.85));
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.login-shell-titles h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.login-shell-titles p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  opacity: 0.88;
+}
+
+.login-page {
+  min-height: 100%;
+  padding: calc(88px + env(safe-area-inset-top, 0px)) 24px 24px;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #e8f0ff 0%, #f7f8fa 45%, #f7f8fa 100%);
+}
+
+.login-brand {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-brand h1 {
+  margin: 16px 0 8px;
+  font-size: 22px;
+  color: #1f1f1f;
+  font-weight: 600;
+}
+
+.login-sub {
+  margin: 0;
+  color: #666;
+  font-size: 15px;
+}
+
+.login-logo {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1677ff, #69b1ff);
+  box-shadow: 0 8px 24px rgba(22, 119, 255, 0.35);
+}
+
+.login-extra {
+  margin-top: 16px;
+  text-align: right;
+}
+
+.login-register {
+  color: #1677ff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.pwd-eye {
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  color: #999;
+}
