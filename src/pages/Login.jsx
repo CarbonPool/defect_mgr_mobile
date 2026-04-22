@@ -3,12 +3,13 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { Button, DotLoading, Form, Input, Toast } from 'antd-mobile'
 import { EyeInvisibleOutline, EyeOutline } from 'antd-mobile-icons'
 import { useAuthStore } from '../stores/authStore'
+import arcLogo from '../assets/arc_logo.png'
 
 function LoginShellHeader() {
   return (
     <header className="login-shell-header">
       <div className="login-shell-header-inner">
-        <div className="login-shell-logo" aria-hidden />
+        <img className="login-shell-logo" src={arcLogo} alt="" width={36} height={36} decoding="async" />
         <div className="login-shell-titles">
           <h2>大圆机管理平台</h2>
           <p>企业登录 · 安全访问</p>
@@ -64,7 +65,7 @@ export default function Login() {
       <LoginShellHeader />
       <div className="login-page">
         <div className="login-brand">
-          <div className="login-logo" aria-hidden />
+          <img className="login-logo" src={arcLogo} alt="" width={56} height={56} decoding="async" />
           <h1>大圆机管理平台</h1>
           <p className="login-sub">登录</p>
         </div>

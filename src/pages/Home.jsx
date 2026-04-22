@@ -230,7 +230,7 @@ export default function Home() {
           {selected ? (
             <div className="device-brief">
               <div>设备信息</div>
-              <div className="muted">部署：{selected.place || '—'}</div>
+              <div className="device-brief-device">设备：{selected.name || '—'}</div>
               <div>
                 转速：
                 <strong>{selected.others?.speed ?? 0}</strong>

@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { UserOutline } from 'antd-mobile-icons'
 import { useAuthStore } from '../stores/authStore'
 import { useHeaderStore } from '../stores/headerStore'
+import arcLogo from '../assets/arc_logo.png'
 
 const PAGE_META = {
   '/': { title: '主页', desc: '设备总览 · 缺陷监控' },
@@ -26,7 +27,7 @@ export default function AppHeader() {
       <div className="app-header-surface">
         <div className="app-header-main">
           <div className="app-header-brand">
-            <div className="app-header-logo" aria-hidden />
+            <img className="app-header-logo" src={arcLogo} alt="" width={40} height={40} decoding="async" />
             <div className="app-header-titles">
               <h1>大圆机管理平台</h1>
               <div className="app-header-tagline">智能制造 · 圆机设备与缺陷一体化管理</div>
