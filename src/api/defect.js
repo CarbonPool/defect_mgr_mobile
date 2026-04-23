@@ -13,7 +13,7 @@ export async function fetchDefectStatistics({ snCode, startTime, endTime }) {
   return res.data
 }
 
-export async function fetchNgRecords({ equipmentId, page, size = 20, key }) {
+export async function fetchNgRecords({ equipmentId, page, size = 20, key, startTime, endTime }) {
   const q = new URLSearchParams({
     equipmentId,
     page: String(page),
@@ -21,6 +21,12 @@ export async function fetchNgRecords({ equipmentId, page, size = 20, key }) {
   })
   if (key !== undefined && key !== null && String(key).trim() !== '') {
     q.set('key', String(key).trim())
+  }
+  if (startTime != null) {
+    q.set('startTime', String(startTime))
+  }
+  if (endTime != null) {
+    q.set('endTime', String(endTime))
   }
   const res = await request(`/api/dyj/data/ng?${q}`)
   if (res.errorCode !== undefined && res.errorCode !== 0) {

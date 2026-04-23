@@ -1,25 +1,14 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Button, DotLoading, Form, Input, Toast } from 'antd-mobile'
 import { EyeInvisibleOutline, EyeOutline } from 'antd-mobile-icons'
 import { useAuthStore } from '../stores/authStore'
+import LoginShellHeader from '../components/LoginShellHeader'
 import arcLogo from '../assets/arc_logo.png'
 
-function LoginShellHeader() {
-  return (
-    <header className="login-shell-header">
-      <div className="login-shell-header-inner">
-        <img className="login-shell-logo" src={arcLogo} alt="" width={36} height={36} decoding="async" />
-        <div className="login-shell-titles">
-          <h2>大圆机管理平台</h2>
-          <p>企业登录 · 安全访问</p>
-        </div>
-      </div>
-    </header>
-  )
-}
-
 export default function Login() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
   const login = useAuthStore((s) => s.login)
@@ -29,6 +18,7 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false)
 
   const from = location.state?.from || '/'
+  const presetUsername = location.state?.username
 
   useEffect(() => {
     if (!loading && user) {
@@ -51,10 +41,10 @@ export default function Login() {
     setSubmitting(true)
     try {
       await login(values.username, values.password)
-      Toast.show({ icon: 'success', content: '登录成功' })
+      Toast.show({ icon: 'success', content: t('login.success') })
       navigate(from, { replace: true })
     } catch (e) {
-      Toast.show({ icon: 'fail', content: e.message || '登录失败' })
+      Toast.show({ icon: 'fail', content: e.message || t('login.fail') })
     } finally {
       setSubmitting(false)
     }
@@ -66,25 +56,27 @@ export default function Login() {
       <div className="login-page">
         <div className="login-brand">
           <img className="login-logo" src={arcLogo} alt="" width={56} height={56} decoding="async" />
-          <h1>大圆机管理平台</h1>
-          <p className="login-sub">登录</p>
+          <h1>{t('app.name')}</h1>
+          <p className="login-sub">{t('login.title')}</p>
         </div>
 
         <Form
+          mode="card"
           layout="horizontal"
           onFinish={onFinish}
+          initialValues={presetUsername ? { username: presetUsername } : undefined}
           footer={
             <Button block type="submit" color="primary" size="large" loading={submitting}>
-              登录
+              {t('login.submit')}
             </Button>
           }
         >
-          <Form.Item name="username" rules={[{ required: true, message: '请输入用户名' }]}>
-            <Input placeholder="用户名" clearable />
+          <Form.Item name="username" rules={[{ required: true, message: t('login.usernameRequired') }]}>
+            <Input placeholder={t('login.username')} clearable autoComplete="username" />
           </Form.Item>
-          <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
+          <Form.Item name="password" rules={[{ required: true, message: t('login.passwordRequired') }]}>
             <Input
-              placeholder="密码"
+              placeholder={t('login.password')}
               clearable
               type={visible ? 'text' : 'password'}
               extra={
@@ -97,15 +89,9 @@ export default function Login() {
         </Form>
 
         <div className="login-extra">
-          <a
-            className="login-register"
-            onClick={(e) => {
-              e.preventDefault()
-              Toast.show({ content: '请联系管理员开通账号' })
-            }}
-          >
-            还没有账户?马上注册
-          </a>
+          <Link to="/register" className="login-register" replace={false}>
+            {t('login.registerHint')}
+          </Link>
         </div>
       </div>
     </>

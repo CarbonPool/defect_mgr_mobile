@@ -25,6 +25,27 @@ export async function login(username, password) {
   return { accessToken, refreshToken, user }
 }
 
+/**
+ * 用户注册（与 api.md POST /api/register 一致）
+ * - password、passwordYes 与登录相同：对用户输入的登录密码做 MD5 后传递
+ * @param {string} passwordYes 确认密码（明文，内部与 password 同样做 md5）
+ * @returns {{ uid: string, createdTime: string }}
+ */
+export async function register(username, password, passwordYes) {
+  const res = await request('/api/register', {
+    method: 'POST',
+    body: JSON.stringify({
+      username,
+      password: md5(password),
+      passwordYes: md5(passwordYes),
+    }),
+  })
+  if (res.code !== undefined && res.code !== 200) {
+    throw new Error(res.msg || '注册失败')
+  }
+  return res.data
+}
+
 export function logout() {
   localStorage.removeItem('accessToken')
   localStorage.removeItem('refreshToken')

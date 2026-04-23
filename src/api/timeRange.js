@@ -3,6 +3,20 @@ export function toEpochMs(date) {
   return Math.floor(date.getTime())
 }
 
+/** 某日 00:00:00.000 的时间戳 */
+export function startOfDayMs(d) {
+  const x = new Date(d)
+  x.setHours(0, 0, 0, 0)
+  return x.getTime()
+}
+
+/** 某日 23:59:59.999 的时间戳 */
+export function endOfDayMs(d) {
+  const x = new Date(d)
+  x.setHours(23, 59, 59, 999)
+  return x.getTime()
+}
+
 export function rangeToday() {
   const now = new Date()
   const start = new Date(now.getFullYear(), now.getMonth(), now.getDate())

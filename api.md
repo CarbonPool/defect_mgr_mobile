@@ -6,28 +6,51 @@ POST /api/login
 - password(string): 登录密码，(md5加密后的字符串）
 
 ## 返回
-interface LoginResponse {
-  accessToken: string; // 访问令牌，用于后续 API 请求鉴权 (通常放在 Authorization Header)
-  refreshToken: string; // 刷新令牌，用于 accessToken 过期后无感刷新
-  user: {
-    uid: string; // 用户唯一ID
-    createdTime: string; // 账号创建时间
-    updateTime: string; // 最后更新时间
-    username: string; // 登录用户名
-    realname: string | null; // 真实姓名
-    sex: 'MALE' | 'FEMALE' | 'UNKNOWN'; // 性别
-    mobile: string | null; // 手机号
-    email: string | null; // 邮箱
-    address: string | null; // 地址
-    pic: string | null; // 头像地址
-    lastLoginTime: string; // 最后登录时间
-    roles: {
-      [roleCode: string]: string; // 角色键值对，例如 { "USER": "用户" }
+{
+  code: number; //状态码(200: 成功, 1001： 用户名或密码错误)
+  data: {
+    accessToken: string; // 访问令牌，用于后续 API 请求鉴权 (通常放在 Authorization Header)
+    refreshToken: string; // 刷新令牌，用于 accessToken 过期后无感刷新
+    user: {
+      uid: string; // 用户唯一ID
+      createdTime: string; // 账号创建时间
+      updateTime: string; // 最后更新时间
+      username: string; // 登录用户名
+      realname: string | null; // 真实姓名
+      sex: 'MALE' | 'FEMALE' | 'UNKNOWN'; // 性别
+      mobile: string | null; // 手机号
+      email: string | null; // 邮箱
+      address: string | null; // 地址
+      pic: string | null; // 头像地址
+      lastLoginTime: string; // 最后登录时间
+      roles: {
+        [roleCode: string]: string; // 角色键值对，例如 { "USER": "用户" }
+      };
+      menus: string[]; // 菜单路径数组，用于前端动态路由渲染
+      permissions: string[]; // 细粒度权限标识符数组，用于按钮级权限控制
+      status: 'NORMAL' | 'BANNED' | 'DISABLED'; // 账号状态
     };
-    menus: string[]; // 菜单路径数组，用于前端动态路由渲染
-    permissions: string[]; // 细粒度权限标识符数组，用于按钮级权限控制
-    status: 'NORMAL' | 'BANNED' | 'DISABLED'; // 账号状态
   };
+
+}
+
+# 用户注册
+POST /api/register
+
+## 参数
+- username(string): 登录用户名
+- password(string): 登录密码（字母+数字+特殊符号 长度不少于8位）
+- passwordYes(string): 确认密码
+
+## 返回
+{
+  code: number; //状态码(200: 成功)
+  data: {
+    uid: string; //用户id
+    createdTime: string; //创建时间，如(2026-04-23 09:51:03)
+  },
+  msg: string; //接口中文消息,如("成功");
+  time: number; //时间戳,如1776909063411
 }
 
 # 获取用户信息
@@ -191,6 +214,8 @@ GET /api/dyj/data/ng
 - size(int): 获取数量
 - equipmentId(string)：设备ID
 - key(string): 缺陷原因，可选，参考缺陷原因
+- startTime(int, 可选): 查询开始时间，毫秒时间戳，一般取当日 00:00:00.000
+- endTime(int, 可选): 查询结束时间，毫秒时间戳，一般取当日 23:59:59.999
 
 interface DetectionRecordResponse {
   time: number; // 响应时间戳
@@ -217,7 +242,7 @@ interface DetectionRecordResponse {
   };
 }
 
-## 缺陷原因code对照表
+# 缺陷原因code对照表
 - 0：坏针
 - 1：破洞
 - 2：横条
@@ -227,15 +252,17 @@ interface DetectionRecordResponse {
 - 6：油针
 - 7：褶皱
 
-## 机器管理状态判断
+# 机器管理状态判断
 - 在线：online = true
 - 空闲: others.status="idle"
 - 检测中：others.status="detect"
 - 异常或错误：others.status="err"
 - 摄像头异常：others.status="err" && others没有cameras属性
 
-## 统计接口
+# 统计接口
 GET /api/dyj/data/statistical
+
+## 参数
 - equipmentId(string)：设备ID
 
 interface Response {

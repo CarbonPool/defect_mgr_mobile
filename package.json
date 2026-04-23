@@ -12,9 +12,11 @@
   "dependencies": {
     "antd-mobile": "^5.42.3",
     "antd-mobile-icons": "^0.3.0",
+    "i18next": "^26.0.6",
     "js-md5": "^0.8.3",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "react-i18next": "^17.0.4",
     "react-router-dom": "^7.14.1",
     "recharts": "^3.8.1",
     "zustand": "^5.0.12"

@@ -1,26 +1,35 @@
 import { useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { UserOutline } from 'antd-mobile-icons'
 import { useAuthStore } from '../stores/authStore'
 import { useHeaderStore } from '../stores/headerStore'
 import arcLogo from '../assets/arc_logo.png'
 
-const PAGE_META = {
-  '/': { title: '主页', desc: '设备总览 · 缺陷监控' },
-  '/defects': { title: '缺陷记录', desc: '检测记录查询与追溯' },
-  '/machines': { title: '机器管理', desc: '设备台账与运行状态' },
-  '/mine': { title: '个人中心', desc: '账号信息与权限' },
+function pageNsFromPath(pathname) {
+  if (pathname === '/' || pathname === '') return 'home'
+  if (pathname.startsWith('/defects')) return 'defects'
+  if (pathname.startsWith('/machines')) return 'machines'
+  return 'mine'
 }
 
 export default function AppHeader() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const user = useAuthStore((s) => s.user)
   const headerRight = useHeaderStore((s) => s.headerRight)
 
-  const meta = useMemo(() => PAGE_META[pathname] ?? PAGE_META['/'], [pathname])
+  const ns = useMemo(() => pageNsFromPath(pathname), [pathname])
+  const meta = useMemo(
+    () => ({
+      title: t(`header.page.${ns}.title`),
+      desc: t(`header.page.${ns}.desc`),
+    }),
+    [ns, t],
+  )
 
-  const displayName = user?.realname || user?.username || '用户'
+  const displayName = user?.realname || user?.username || t('header.user')
 
   return (
     <header className="app-header" role="banner">
@@ -29,8 +38,8 @@ export default function AppHeader() {
           <div className="app-header-brand">
             <img className="app-header-logo" src={arcLogo} alt="" width={40} height={40} decoding="async" />
             <div className="app-header-titles">
-              <h1>大圆机管理平台</h1>
-              <div className="app-header-tagline">智能制造 · 圆机设备与缺陷一体化管理</div>
+              <h1>{t('app.name')}</h1>
+              <div className="app-header-tagline">{t('app.tagline')}</div>
             </div>
           </div>
           <div className="app-header-actions">
@@ -39,7 +48,7 @@ export default function AppHeader() {
                 type="button"
                 className="app-header-user"
                 onClick={() => navigate('/mine')}
-                aria-label="进入个人中心"
+                aria-label={t('header.goProfile')}
               >
                 <span className="app-header-user-avatar" aria-hidden>
                   <UserOutline className="app-header-user-icon" />
@@ -50,7 +59,7 @@ export default function AppHeader() {
           </div>
         </div>
         <div className="app-header-current">
-          <span className="app-header-current-label">当前</span>
+          <span className="app-header-current-label">{t('header.current')}</span>
           <strong>{meta.title}</strong>
           <span className="app-header-current-dot">·</span>
           <span className="app-header-current-desc">{meta.desc}</span>

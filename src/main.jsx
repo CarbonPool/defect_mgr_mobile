@@ -1,9 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
-import { unstableSetRender, ConfigProvider } from 'antd-mobile'
-import zhCN from 'antd-mobile/es/locales/zh-CN'
+import { I18nextProvider } from 'react-i18next'
+import { unstableSetRender } from 'antd-mobile'
 import App from './App.jsx'
+import './i18n'
+import i18n from './i18n'
+import LocaleConfig from './components/LocaleConfig.jsx'
 import './index.css'
 
 unstableSetRender((node, container) => {
@@ -18,10 +21,12 @@ unstableSetRender((node, container) => {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ConfigProvider locale={zhCN}>
-      <HashRouter>
-        <App />
-      </HashRouter>
-    </ConfigProvider>
+    <I18nextProvider i18n={i18n}>
+      <LocaleConfig>
+        <HashRouter>
+          <App />
+        </HashRouter>
+      </LocaleConfig>
+    </I18nextProvider>
   </StrictMode>,
 )

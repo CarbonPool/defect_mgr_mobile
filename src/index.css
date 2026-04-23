@@ -306,7 +306,6 @@ body {
 }
 
 .defect-toolbar-picks-row .defect-pick-btn.adm-button {
-  flex: 1;
   min-width: 0;
   min-height: 44px;
   padding: 8px 10px;
@@ -340,6 +339,7 @@ body {
 }
 
 .defect-toolbar-picks-row .defect-pick-btn--project.adm-button {
+  flex: 1.65 1 0;
   background: linear-gradient(180deg, #ffffff 0%, #f6f8fc 100%);
   border-color: #d0d9e8 !important;
   color: #1f2937;
@@ -356,6 +356,7 @@ body {
 }
 
 .defect-toolbar-picks-row .defect-pick-btn--equipment.adm-button {
+  flex: 0.8 1 0;
   box-shadow: 0 2px 8px rgba(22, 119, 255, 0.28);
 }
 
@@ -501,10 +502,20 @@ body {
   color: #1f1f1f;
 }
 
+.defect-swiper-img-tap {
+  display: block;
+  width: 100%;
+  height: 200px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
 .defect-swiper-img {
   width: 100%;
   height: 200px;
   background: #111;
+  pointer-events: none;
 }
 
 .stat-total {
@@ -592,6 +603,41 @@ body {
   font-weight: 600;
   color: #1677ff;
   flex-shrink: 0;
+}
+
+/* 首页：设备数据总览上方留白略收 */
+.home-page-pad {
+  padding-top: 6px;
+}
+
+.home-page-pad > .block-card:first-of-type {
+  margin-top: 6px;
+}
+
+.home-inline-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  box-sizing: border-box;
+}
+
+.home-ng-pie-loading {
+  min-height: 240px;
+}
+
+.stat-total-num .adm-dot-loading {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.defect-list-body-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 32px 16px 48px;
+  box-sizing: border-box;
 }
 
 .chart-placeholder {
@@ -711,6 +757,53 @@ body {
   background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 55%, #f5f5f5 100%);
 }
 
+/* 标题在 Card 的 header 内占满整行，名称左、信号右 */
+.machine-card-inner .adm-card-header {
+  width: 100%;
+}
+
+.machine-card-inner .adm-card-header-title {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* 机器管理：搜索条固定在上，仅列表区域滚动（与缺陷记录页结构一致） */
+.page.machines-page.machines-page--layout {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.machines-page-toolbar {
+  flex-shrink: 0;
+  padding: 12px 12px 10px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.machines-page-list-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.machines-page-list-pad {
+  padding: 10px 12px 24px;
+}
+
+.machines-page-list-pad .list-stack {
+  margin-top: 0;
+}
+
+.machines-search-empty {
+  margin-top: 20px;
+}
+
 .machine-card-title-row {
   display: flex;
   align-items: center;
@@ -729,12 +822,51 @@ body {
   white-space: nowrap;
 }
 
-.machine-card-status-line {
-  margin-bottom: 8px;
+/* 主状态与标题的间距再收一点 */
+.machine-card-inner .adm-card-body {
+  padding-top: 2px;
 }
 
+.machine-card-status-line {
+  margin-bottom: 6px;
+}
+
+/* 主状态角标（检测中/空闲等）：略小一档 */
 .machine-card-status-tag {
   font-weight: 500;
+  font-size: 14px;
+  line-height: 1.3;
+  padding: 4px 12px;
+}
+
+/* 机台信息：左列标签窄、右对齐，右为数值 */
+.machine-card-meta-row {
+  display: flex;
+  align-items: flex-start;
+  column-gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.machine-card-meta-k {
+  flex: 0 0 1.9rem;
+  width: 1.9rem;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.machine-card-meta-v {
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: left;
+  word-break: break-word;
+}
+
+/* 转数：与上一行多留空，易扫读 */
+.machine-card-rpm-line {
+  margin-top: 14px;
 }
 
 .machine-card-shell--offline .machine-card-status-tag,
@@ -781,7 +913,6 @@ body {
 
 .wifi-bar--on.wifi-bar--detect {
   background: #fff;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
 }
 
 .wifi-bar--idle:not(.wifi-bar--on) {
@@ -850,14 +981,44 @@ body {
   margin-bottom: 8px;
 }
 
-.filter-hint {
-  font-size: 12px;
-  line-height: 1.4;
-}
-
 .filter-label {
   margin-bottom: 8px;
   font-size: 14px;
+}
+
+.filter-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.filter-label-row .filter-label {
+  margin-bottom: 0;
+}
+
+.filter-time-clear {
+  font-size: 13px;
+  color: #1677ff;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.defect-date-filter-btn {
+  font-weight: 400;
+}
+
+/* 缺陷筛选：开始/结束时间同一行两列 */
+.defect-filter-time-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.defect-filter-time-col {
+  flex: 1;
+  min-width: 0;
 }
 
 /* 缺陷「更多筛选」弹层：防止 Selector / 内容横向溢出 */
@@ -869,6 +1030,7 @@ body {
 }
 
 .defect-filter-popup-body .adm-selector {
+  --border-radius: 8px;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -884,6 +1046,20 @@ body {
   max-width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
+}
+
+/* 更多筛选：应用 / 重置 同一行 */
+.defect-filter-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.defect-filter-actions .defect-filter-action-btn {
+  flex: 1;
+  min-width: 0;
 }
 
 .login-shell-header {
@@ -955,6 +1131,14 @@ body {
   font-size: 15px;
 }
 
+.register-rule-hint {
+  margin: -16px 0 20px;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+  padding: 0 8px;
+}
+
 .login-logo {
   display: block;
   width: 56px;
@@ -975,6 +1159,33 @@ body {
   color: #1677ff;
   font-size: 14px;
   cursor: pointer;
+  text-decoration: none;
+}
+
+.login-register:hover,
+.login-register:active,
+.login-register:focus,
+.login-register:visited {
+  text-decoration: none;
+  color: #1677ff;
+}
+
+/* 登录/注册：Form 使用 mode=card 后圆角在 .adm-list-body 上，仅改 Input 包一层看不出效果 */
+.login-page .adm-list-card {
+  margin: 0 0 12px;
+}
+
+.login-page .adm-list-card .adm-list-body {
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.login-page .adm-input {
+  --border-radius: 8px;
+}
+
+.login-page .adm-input .adm-input-element {
+  border-radius: 8px;
 }
 
 .pwd-eye {

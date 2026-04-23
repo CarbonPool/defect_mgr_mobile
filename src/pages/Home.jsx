@@ -6,6 +6,7 @@ import {
   DotLoading,
   ErrorBlock,
   Image,
+  ImageViewer,
   Picker,
   Space,
   Swiper,
@@ -13,6 +14,7 @@ import {
   Toast,
 } from 'antd-mobile'
 import { RightOutline } from 'antd-mobile-icons'
+import { useTranslation } from 'react-i18next'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { fetchEquipments } from '../api/equipments'
 import { fetchDefectStatistics, fetchNgReasonStatistical, fetchNgRecords } from '../api/defect'
@@ -39,13 +41,14 @@ function ngPieSliceColor(row) {
   return NG_PIE_OTHER_COLOR
 }
 
-const RANGE_KEYS = [
-  { key: 'today', label: '今日', fn: rangeToday },
-  { key: 'week', label: '本周', fn: rangeThisWeek },
-  { key: 'month', label: '本月', fn: rangeThisMonth },
-]
+const RANGE_FNS = {
+  today: rangeToday,
+  week: rangeThisWeek,
+  month: rangeThisMonth,
+}
 
 export default function Home() {
+  const { t } = useTranslation()
   const [equipments, setEquipments] = useState([])
   const [eqPickerVisible, setEqPickerVisible] = useState(false)
   const [eqValue, setEqValue] = useState([])
@@ -53,9 +56,18 @@ export default function Home() {
   const [stats, setStats] = useState(null)
   const [rangeKey, setRangeKey] = useState('today')
   const [swiperUrls, setSwiperUrls] = useState([])
-  /** 统计接口一次返回今日/周/月，饼图按 rangeKey 取用 */
   const [ngStatisticalData, setNgStatisticalData] = useState(null)
+  const [statsLoading, setStatsLoading] = useState(true)
   const [loadErr, setLoadErr] = useState('')
+
+  const rangeTabs = useMemo(
+    () => [
+      { key: 'today', label: t('home.range.today') },
+      { key: 'week', label: t('home.range.week') },
+      { key: 'month', label: t('home.range.month') },
+    ],
+    [t],
+  )
 
   const loadEquipments = useCallback(async () => {
     setLoadErr('')
@@ -69,12 +81,12 @@ export default function Home() {
         return list[0] ? [list[0].uid] : []
       })
     } catch (e) {
-      setLoadErr(e.message || '加载设备失败')
+      setLoadErr(e.message || t('home.loadEquipFail'))
       Toast.show({ icon: 'fail', content: e.message })
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [t])
 
   useEffect(() => {
     loadEquipments()
@@ -93,58 +105,67 @@ export default function Home() {
         : rangeKey === 'week'
           ? ngStatisticalData.week
           : ngStatisticalData.month
-    return buildNgPieSlicesFromStatisticalRows(rows)
-  }, [ngStatisticalData, rangeKey])
+    return buildNgPieSlicesFromStatisticalRows(rows, t)
+  }, [ngStatisticalData, rangeKey, t])
 
   const loadStatsAndImages = useCallback(async () => {
     if (!selected?.snCode || !selected?.uid) {
       setStats(null)
       setSwiperUrls([])
       setNgStatisticalData(null)
+      setStatsLoading(false)
       return
     }
-    const rangeFn = RANGE_KEYS.find((r) => r.key === rangeKey)?.fn ?? rangeToday
+    setStatsLoading(true)
+    setStats(null)
+    setSwiperUrls([])
+    setNgStatisticalData(null)
+    const rangeFn = RANGE_FNS[rangeKey] ?? rangeToday
     const { start, end } = rangeFn()
 
-    const [statsResult, statResult, ngResult] = await Promise.allSettled([
-      fetchDefectStatistics({
-        snCode: selected.snCode,
-        startTime: start,
-        endTime: end,
-      }),
-      fetchNgReasonStatistical({ equipmentId: selected.uid }),
-      fetchNgRecords({ equipmentId: selected.uid, page: 1, size: 8 }),
-    ])
+    try {
+      const [statsResult, statResult, ngResult] = await Promise.allSettled([
+        fetchDefectStatistics({
+          snCode: selected.snCode,
+          startTime: start,
+          endTime: end,
+        }),
+        fetchNgReasonStatistical({ equipmentId: selected.uid }),
+        fetchNgRecords({ equipmentId: selected.uid, page: 1, size: 8 }),
+      ])
 
-    if (statsResult.status === 'fulfilled') {
-      setStats(statsResult.value)
-    } else {
-      Toast.show({ icon: 'fail', content: statsResult.reason?.message ?? '缺陷统计失败' })
-      setStats(null)
-    }
+      if (statsResult.status === 'fulfilled') {
+        setStats(statsResult.value)
+      } else {
+        Toast.show({ icon: 'fail', content: statsResult.reason?.message ?? t('home.statFail') })
+        setStats(null)
+      }
 
-    if (statResult.status === 'fulfilled') {
-      const d = statResult.value
-      setNgStatisticalData({
-        today: d.todayNgReasonStatistical ?? [],
-        week: d.thisWeekNgReasonStatistical ?? [],
-        month: d.thisMonthNgReasonStatistical ?? [],
-      })
-    } else {
-      Toast.show({ icon: 'fail', content: statResult.reason?.message ?? '缺陷类型统计失败' })
-      setNgStatisticalData(null)
-    }
+      if (statResult.status === 'fulfilled') {
+        const d = statResult.value
+        setNgStatisticalData({
+          today: d.todayNgReasonStatistical ?? [],
+          week: d.thisWeekNgReasonStatistical ?? [],
+          month: d.thisMonthNgReasonStatistical ?? [],
+        })
+      } else {
+        Toast.show({ icon: 'fail', content: statResult.reason?.message ?? t('home.ngStatFail') })
+        setNgStatisticalData(null)
+      }
 
-    if (ngResult.status === 'fulfilled') {
-      const ng = ngResult.value
-      const urls = (ng?.list ?? [])
-        .map((r) => resolveImageUrl(r.imageUrl))
-        .filter(Boolean)
-      setSwiperUrls(urls)
-    } else {
-      setSwiperUrls([])
+      if (ngResult.status === 'fulfilled') {
+        const ng = ngResult.value
+        const urls = (ng?.list ?? [])
+          .map((r) => resolveImageUrl(r.imageUrl))
+          .filter(Boolean)
+        setSwiperUrls(urls)
+      } else {
+        setSwiperUrls([])
+      }
+    } finally {
+      setStatsLoading(false)
     }
-  }, [selected, rangeKey])
+  }, [selected, rangeKey, t])
 
   useEffect(() => {
     loadStatsAndImages()
@@ -171,9 +192,9 @@ export default function Home() {
   if (loadErr && !equipments.length) {
     return (
       <div className="page-pad">
-        <ErrorBlock status="default" title={loadErr} description="请检查网络或代理配置" />
+        <ErrorBlock status="default" title={loadErr} description={t('home.checkNetwork')} />
         <Button color="primary" onClick={loadEquipments}>
-          重试
+          {t('home.retry')}
         </Button>
       </div>
     )
@@ -181,7 +202,7 @@ export default function Home() {
 
   const openEquipmentPicker = () => {
     if (!equipments.length) {
-      Toast.show({ content: '暂无设备可选' })
+      Toast.show({ content: t('home.noDevicePick') })
       return
     }
     setEqPickerVisible(true)
@@ -189,7 +210,7 @@ export default function Home() {
 
   return (
     <div className="page home-page">
-      <div className="page-pad">
+      <div className="page-pad home-page-pad">
         <Picker
           columns={eqColumns}
           visible={eqPickerVisible}
@@ -200,13 +221,13 @@ export default function Home() {
             setEqValue(v)
             setEqPickerVisible(false)
           }}
-          title="选择设备"
+          title={t('home.selectDevice')}
         >
           {() => null}
         </Picker>
 
         <Card
-          title="设备数据总览"
+          title={t('home.deviceOverview')}
           className={`block-card device-overview-card${equipments.length ? ' device-overview-card--active' : ''}`}
           extra={
             <div className="device-overview-card-extra" onClick={(e) => e.stopPropagation()}>
@@ -216,11 +237,11 @@ export default function Home() {
                 fill="outline"
                 onClick={() => loadEquipments().then(loadStatsAndImages)}
               >
-                刷新
+                {t('home.refresh')}
               </Button>
               {equipments.length ? (
                 <button type="button" className="device-overview-extra" onClick={openEquipmentPicker}>
-                  切换 <RightOutline />
+                  {t('home.switch')} <RightOutline />
                 </button>
               ) : null}
             </div>
@@ -229,72 +250,109 @@ export default function Home() {
         >
           {selected ? (
             <div className="device-brief">
-              <div>设备信息</div>
-              <div className="device-brief-device">设备：{selected.name || '—'}</div>
+              <div>{t('home.deviceInfo')}</div>
+              <div className="device-brief-device">
+                {t('home.deviceLabel')}：{selected.name || '—'}
+              </div>
               <div>
-                转速：
+                {t('home.speed')}：
                 <strong>{selected.others?.speed ?? 0}</strong>
               </div>
               <Space style={{ marginTop: 8 }}>
                 <Tag color={selected.online ? 'success' : 'default'}>
-                  {selected.online ? '在线' : '离线'}
+                  {selected.online ? t('home.online') : t('home.offline')}
                 </Tag>
                 <Tag color={selected.vpnStatus === 'ON' ? 'primary' : 'default'}>
-                  VPN {selected.vpnStatus === 'ON' ? '开' : '关'}
+                  VPN {selected.vpnStatus === 'ON' ? t('home.vpnOn') : t('home.vpnOff')}
                 </Tag>
               </Space>
             </div>
           ) : (
-            <div className="muted">暂无设备</div>
+            <div className="muted">{t('home.noDevice')}</div>
           )}
         </Card>
 
-        <Card title="缺陷报警" className="block-card">
-          {swiperUrls.length ? (
+        <Card title={t('home.defectAlarm')} className="block-card">
+          {!selected ? (
+            <div className="muted chart-placeholder">{t('home.selectDeviceFirst')}</div>
+          ) : statsLoading ? (
+            <div className="chart-placeholder home-inline-loading">
+              <DotLoading color="primary" />
+            </div>
+          ) : swiperUrls.length ? (
             <Swiper loop autoplay autoplayInterval={4000} indicatorProps={{ color: 'white' }}>
               {swiperUrls.map((src, i) => (
                 <Swiper.Item key={`${src}-${i}`}>
-                  <Image src={src} fit="contain" className="defect-swiper-img" />
+                  <div
+                    className="defect-swiper-img-tap"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => {
+                      if (src) ImageViewer.show({ image: src, maxZoom: 5 })
+                    }}
+                    onKeyDown={(ev) => {
+                      if (ev.key === 'Enter' || ev.key === ' ') {
+                        ev.preventDefault()
+                        if (src) ImageViewer.show({ image: src, maxZoom: 5 })
+                      }
+                    }}
+                  >
+                    <Image src={src} fit="contain" className="defect-swiper-img" />
+                  </div>
                 </Swiper.Item>
               ))}
             </Swiper>
           ) : (
-            <div className="muted chart-placeholder">暂无最近缺陷图片</div>
+            <div className="muted chart-placeholder">{t('home.noDefectImages')}</div>
           )}
         </Card>
 
-        <Card title="缺陷数量" className="block-card">
+        <Card title={t('home.defectCount')} className="block-card">
           <CapsuleTabs activeKey={rangeKey} onChange={setRangeKey}>
-            {RANGE_KEYS.map((t) => (
-              <CapsuleTabs.Tab title={t.label} key={t.key} />
+            {rangeTabs.map((tab) => (
+              <CapsuleTabs.Tab title={tab.label} key={tab.key} />
             ))}
           </CapsuleTabs>
           <div className="stat-total">
-            <div className="stat-total-label">缺陷总数</div>
+            <div className="stat-total-label">{t('home.totalDefects')}</div>
             <div className="stat-total-num">
-              {stats
-                ? (stats.stopNgDataCount ?? 0) + (stats.normalNgDataCount ?? 0)
-                : '—'}
-              <span className="unit">个</span>
+              {statsLoading && selected ? (
+                <DotLoading color="white" />
+              ) : (
+                <>
+                  {stats
+                    ? (stats.stopNgDataCount ?? 0) + (stats.normalNgDataCount ?? 0)
+                    : '—'}
+                  <span className="unit">{t('home.unit')}</span>
+                </>
+              )}
             </div>
           </div>
           <Space direction="vertical" block style={{ marginTop: 12 }}>
             <div className="stat-bar-row">
-              <span>不停机缺陷</span>
-              <span className="stat-bar-val warn">{stats?.stopNgDataCount ?? '—'}</span>
+              <span>{t('home.nonStopDefects')}</span>
+              <span className="stat-bar-val warn">
+                {statsLoading && selected ? '—' : stats?.stopNgDataCount ?? '—'}
+              </span>
             </div>
             <div className="stat-bar-row">
-              <span>停机缺陷</span>
-              <span className="stat-bar-val danger">{stats?.normalNgDataCount ?? '—'}</span>
+              <span>{t('home.stopDefects')}</span>
+              <span className="stat-bar-val danger">
+                {statsLoading && selected ? '—' : stats?.normalNgDataCount ?? '—'}
+              </span>
             </div>
           </Space>
         </Card>
 
-        <Card title="缺陷类型分布" className="block-card">
+        <Card title={t('home.defectTypeChart')} className="block-card">
           {!selected ? (
-            <div className="muted chart-placeholder">请先选择设备</div>
+            <div className="muted chart-placeholder">{t('home.selectDeviceFirst')}</div>
+          ) : statsLoading ? (
+            <div className="chart-placeholder home-inline-loading home-ng-pie-loading">
+              <DotLoading color="primary" />
+            </div>
           ) : ngPieData.length === 0 ? (
-            <div className="muted chart-placeholder">暂无分项数据</div>
+            <div className="muted chart-placeholder">{t('home.noChartData')}</div>
           ) : (
             <div className="home-ng-pie-wrap">
               <ResponsiveContainer width="100%" height={240}>
@@ -313,7 +371,9 @@ export default function Home() {
                       <Cell key={`${row.code}-${i}`} fill={ngPieSliceColor(row)} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(v) => [`${v} 条`, '数量']} />
+                  <Tooltip
+                    formatter={(v) => [t('home.pieTooltip', { count: v }), t('home.countLabel')]}
+                  />
                 </PieChart>
               </ResponsiveContainer>
               <ul className="home-ng-pie-legend">
