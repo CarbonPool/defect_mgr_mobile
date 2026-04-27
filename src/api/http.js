@@ -59,7 +59,13 @@ export async function request(path, options = {}) {
   }
 
   if (!res.ok) {
-    const msg = data.msg || data.message || data.errorMessage || res.statusText
+    let msg = data.msg || data.message || data.errorMessage || res.statusText
+    if (typeof msg === 'string' && /<\s*html[\s>]/i.test(msg)) {
+      msg =
+        res.status === 502 || res.status === 503 || res.status === 504
+          ? '网关或上游服务不可用（502/503/504），请稍后重试或联系管理员'
+          : `服务返回异常页面（HTTP ${res.status}），请稍后重试`
+    }
     throw new Error(msg || `HTTP ${res.status}`)
   }
 

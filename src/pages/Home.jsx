@@ -19,6 +19,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { fetchEquipments } from '../api/equipments'
 import { fetchDefectStatistics, fetchNgReasonStatistical, fetchNgRecords } from '../api/defect'
 import { rangeThisMonth, rangeThisWeek, rangeToday } from '../api/timeRange'
+import fanIcon from '../assets/icons/fan.svg'
 import { resolveImageUrl } from '../utils/assetUrl'
 import { buildNgPieSlicesFromStatisticalRows } from '../utils/ngReason'
 
@@ -45,6 +46,13 @@ const RANGE_FNS = {
   today: rangeToday,
   week: rangeThisWeek,
   month: rangeThisMonth,
+}
+
+/** 转速保留四位小数 */
+function formatSpeedDecimals(raw) {
+  const n = Number(raw)
+  if (!Number.isFinite(n)) return (0).toFixed(4)
+  return n.toFixed(4)
 }
 
 export default function Home() {
@@ -249,23 +257,37 @@ export default function Home() {
           onClick={equipments.length ? openEquipmentPicker : undefined}
         >
           {selected ? (
-            <div className="device-brief">
-              <div>{t('home.deviceInfo')}</div>
-              <div className="device-brief-device">
-                {t('home.deviceLabel')}：{selected.name || '—'}
+            <div className="device-overview-tiles">
+              <div className="device-overview-tile device-overview-tile--machine">
+                <div className="device-overview-tile-kicker">{t('home.deviceLabel')}</div>
+                <div className="device-overview-tile-title">{selected.name || '—'}</div>
+                <Space wrap className="device-overview-tile-tags">
+                  <Tag color={selected.online ? 'success' : 'default'}>
+                    {selected.online ? t('home.online') : t('home.offline')}
+                  </Tag>
+                  <Tag color={selected.vpnStatus === 'ON' ? 'primary' : 'default'}>
+                    VPN {selected.vpnStatus === 'ON' ? t('home.vpnOn') : t('home.vpnOff')}
+                  </Tag>
+                </Space>
               </div>
-              <div>
-                {t('home.speed')}：
-                <strong>{selected.others?.speed ?? 0}</strong>
+              <div className="device-overview-tile device-overview-tile--speed">
+                <div className="device-overview-speed-row">
+                  <img
+                    src={fanIcon}
+                    alt=""
+                    className="device-overview-fan-icon"
+                    width={28}
+                    height={28}
+                    decoding="async"
+                  />
+                  <span className="device-overview-tile-kicker device-overview-speed-label">
+                    {t('home.speed')}
+                  </span>
+                </div>
+                <div className="device-overview-speed-num">
+                  {formatSpeedDecimals(selected.others?.speed ?? 0)}
+                </div>
               </div>
-              <Space style={{ marginTop: 8 }}>
-                <Tag color={selected.online ? 'success' : 'default'}>
-                  {selected.online ? t('home.online') : t('home.offline')}
-                </Tag>
-                <Tag color={selected.vpnStatus === 'ON' ? 'primary' : 'default'}>
-                  VPN {selected.vpnStatus === 'ON' ? t('home.vpnOn') : t('home.vpnOff')}
-                </Tag>
-              </Space>
             </div>
           ) : (
             <div className="muted">{t('home.noDevice')}</div>
@@ -307,12 +329,19 @@ export default function Home() {
           )}
         </Card>
 
-        <Card title={t('home.defectCount')} className="block-card">
-          <CapsuleTabs activeKey={rangeKey} onChange={setRangeKey}>
-            {rangeTabs.map((tab) => (
-              <CapsuleTabs.Tab title={tab.label} key={tab.key} />
-            ))}
-          </CapsuleTabs>
+        <Card
+          title={t('home.defectCount')}
+          className="block-card defect-count-card"
+          extra={
+            <div className="defect-count-card-extra-tabs" onClick={(e) => e.stopPropagation()}>
+              <CapsuleTabs activeKey={rangeKey} onChange={setRangeKey}>
+                {rangeTabs.map((tab) => (
+                  <CapsuleTabs.Tab title={tab.label} key={tab.key} />
+                ))}
+              </CapsuleTabs>
+            </div>
+          }
+        >
           <div className="stat-total">
             <div className="stat-total-label">{t('home.totalDefects')}</div>
             <div className="stat-total-num">
