@@ -2,10 +2,35 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Button, DotLoading, Form, Input, Toast } from 'antd-mobile'
-import { EyeInvisibleOutline, EyeOutline } from 'antd-mobile-icons'
+import { EyeInvisibleOutline, EyeOutline, LockOutline, UserOutline } from 'antd-mobile-icons'
+import LoginWaveLayer from '../components/LoginWaveLayer'
 import { useAuthStore } from '../stores/authStore'
-import LoginShellHeader from '../components/LoginShellHeader'
 import arcLogo from '../assets/arc_logo.png'
+
+function LoginUsernameField(props) {
+  return (
+    <div className="login-input-row">
+      <UserOutline className="login-input-icon" />
+      <Input {...props} className="login-input-stretch" />
+    </div>
+  )
+}
+
+function LoginPasswordField({ showPassword, onTogglePassword, ...fieldProps }) {
+  return (
+    <div className="login-input-row">
+      <LockOutline className="login-input-icon" />
+      <Input
+        {...fieldProps}
+        type={showPassword ? 'text' : 'password'}
+        className="login-input-stretch"
+      />
+      <div className="pwd-eye" onClick={onTogglePassword} role="presentation">
+        {showPassword ? <EyeOutline /> : <EyeInvisibleOutline />}
+      </div>
+    </div>
+  )
+}
 
 export default function Login() {
   const { t } = useTranslation()
@@ -28,12 +53,12 @@ export default function Login() {
 
   if (loading) {
     return (
-      <>
-        <LoginShellHeader />
-        <div className="page-loading login-page">
+      <div className="login-page login-page--no-header login-page--loading">
+        <LoginWaveLayer />
+        <div className="login-page-body">
           <DotLoading color="primary" />
         </div>
-      </>
+      </div>
     )
   }
 
@@ -51,9 +76,9 @@ export default function Login() {
   }
 
   return (
-    <>
-      <LoginShellHeader />
-      <div className="login-page">
+    <div className="login-page login-page--no-header">
+      <LoginWaveLayer />
+      <div className="login-page-body">
         <div className="login-brand">
           <img className="login-logo" src={arcLogo} alt="" width={56} height={56} decoding="async" />
           <h1>{t('app.name')}</h1>
@@ -72,18 +97,15 @@ export default function Login() {
           }
         >
           <Form.Item name="username" rules={[{ required: true, message: t('login.usernameRequired') }]}>
-            <Input placeholder={t('login.username')} clearable autoComplete="username" />
+            <LoginUsernameField placeholder={t('login.username')} clearable autoComplete="username" />
           </Form.Item>
           <Form.Item name="password" rules={[{ required: true, message: t('login.passwordRequired') }]}>
-            <Input
+            <LoginPasswordField
+              showPassword={visible}
+              onTogglePassword={() => setVisible((v) => !v)}
               placeholder={t('login.password')}
               clearable
-              type={visible ? 'text' : 'password'}
-              extra={
-                <div className="pwd-eye" onClick={() => setVisible((v) => !v)}>
-                  {visible ? <EyeOutline /> : <EyeInvisibleOutline />}
-                </div>
-              }
+              autoComplete="current-password"
             />
           </Form.Item>
         </Form>
@@ -94,6 +116,6 @@ export default function Login() {
           </Link>
         </div>
       </div>
-    </>
+    </div>
   )
 }

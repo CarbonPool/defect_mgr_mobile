@@ -1107,10 +1107,68 @@ body {
 }
 
 .login-page {
+  position: relative;
   min-height: 100%;
   padding: calc(88px + env(safe-area-inset-top, 0px)) 24px 24px;
   box-sizing: border-box;
   background: linear-gradient(180deg, #e8f0ff 0%, #f7f8fa 45%, #f7f8fa 100%);
+  overflow: hidden;
+}
+
+.login-waves {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 42vh;
+  max-height: 260px;
+  min-height: 112px;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.login-waves-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.login-page-body {
+  position: relative;
+  z-index: 1;
+}
+
+/* 与 LoginWaveLayer 同屏时，加载态居中不触发双 flex 子项排布问题 */
+.login-page--loading .login-page-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 45vh;
+}
+
+/* 登录页无顶部 shell header 时由品牌区顶边距承担安全区 */
+.login-page--no-header {
+  padding: calc(24px + env(safe-area-inset-top, 0px)) 24px 24px;
+}
+
+.login-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.login-input-row .login-input-icon {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: #999;
+}
+
+.login-input-row .login-input-stretch.adm-input {
+  flex: 1;
+  min-width: 0;
 }
 
 .login-brand {
@@ -1189,6 +1247,7 @@ body {
 }
 
 .pwd-eye {
+  flex-shrink: 0;
   padding: 4px;
   display: flex;
   align-items: center;
