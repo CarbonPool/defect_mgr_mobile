@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Card, DotLoading, Empty, ErrorBlock, PullToRefresh, SearchBar, Space, Tag, Toast } from 'antd-mobile'
+import { Card, DotLoading, Empty, ErrorBlock, PullToRefresh, SearchBar, Tag, Toast } from 'antd-mobile'
+import { EnvironmentOutline } from 'antd-mobile-icons'
 import { useTranslation } from 'react-i18next'
 import { fetchEquipments } from '../api/equipments'
 import {
@@ -105,7 +106,7 @@ export default function Machines() {
                     description={keyword.trim() ? t('machines.noMatch') : t('machines.empty')}
                   />
                 ) : (
-                  <Space direction="vertical" block className="list-stack">
+                  <div className="machines-grid list-stack">
                   {displayList.map((e) => {
                 const variant = getMachineCardVariant(e)
                 const statusTitle = getMachineStatusTitle(e, t)
@@ -134,7 +135,13 @@ export default function Machines() {
                         </Tag>
                       </div>
                       <div className="machine-card-meta machine-card-meta-row muted">
-                        <span className="machine-card-meta-k">{t('machines.place')}</span>
+                        <span
+                          className="machine-card-meta-k machine-card-meta-k--place"
+                          aria-label={t('machines.place')}
+                          title={t('machines.place')}
+                        >
+                          <EnvironmentOutline className="machine-card-meta-place-icon" aria-hidden />
+                        </span>
                         <span className="machine-card-meta-v">{e.place || '—'}</span>
                       </div>
                       <div className="machine-card-meta machine-card-meta-row muted">
@@ -149,7 +156,7 @@ export default function Machines() {
                   </div>
                 )
                   })}
-                  </Space>
+                  </div>
                 )}
               </div>
             </PullToRefresh>

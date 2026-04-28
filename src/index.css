@@ -943,6 +943,18 @@ body {
   margin-top: 0;
 }
 
+/* 机器列表：一行两卡 */
+.machines-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.machines-grid .machine-card-shell {
+  margin-bottom: 0;
+}
+
 .machines-search-empty {
   margin-top: 20px;
 }
@@ -982,7 +994,7 @@ body {
   padding: 4px 12px;
 }
 
-/* 机台信息：左列标签窄、右对齐，右为数值 */
+/* 机台信息：左列标签按文案宽度（英/中文都能完整显示）、右对齐，右为数值 */
 .machine-card-meta-row {
   display: flex;
   align-items: flex-start;
@@ -992,12 +1004,21 @@ body {
 }
 
 .machine-card-meta-k {
-  flex: 0 0 1.9rem;
-  width: 1.9rem;
+  flex: 0 0 auto;
   text-align: right;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.machine-card-meta-k--place {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 1.25em;
+}
+
+.machine-card-meta-place-icon {
+  font-size: 17px;
+  flex-shrink: 0;
 }
 
 .machine-card-meta-v {
