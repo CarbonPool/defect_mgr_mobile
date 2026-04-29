@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Card, DotLoading, Empty, ErrorBlock, PullToRefresh, SearchBar, Tag, Toast } from 'antd-mobile'
-import { EnvironmentOutline } from 'antd-mobile-icons'
+import { Card, DotLoading, Empty, ErrorBlock, PullToRefresh, SearchBar, Toast } from 'antd-mobile'
+import { EnvironmentOutline, ScanCodeOutline } from 'antd-mobile-icons'
 import { useTranslation } from 'react-i18next'
 import { fetchEquipments } from '../api/equipments'
+import FanIcon from '../components/FanIcon'
 import {
   getMachineCardVariant,
   getMachineStatusTitle,
@@ -112,6 +113,8 @@ export default function Machines() {
                 const statusTitle = getMachineStatusTitle(e, t)
                 const showWifi = shouldShowWifiBars(e)
                 const wifiLevel = getNetworkBarLevel(e.others?.network)
+                const rpmNum = Number(e.others?.speed)
+                const rpmSpinning = Number.isFinite(rpmNum) && rpmNum !== 0
                 return (
                   <div key={e.uid} className={`machine-card-shell machine-card-shell--${variant}`}>
                     <Card
@@ -130,9 +133,9 @@ export default function Machines() {
                       }
                     >
                       <div className="machine-card-status-line">
-                        <Tag round color="primary" fill="outline" className="machine-card-status-tag">
+                        <span className={`machine-card-status-text machine-card-status-text--${variant}`}>
                           {statusTitle}
-                        </Tag>
+                        </span>
                       </div>
                       <div className="machine-card-meta machine-card-meta-row muted">
                         <span
@@ -144,12 +147,27 @@ export default function Machines() {
                         </span>
                         <span className="machine-card-meta-v">{e.place || '—'}</span>
                       </div>
-                      <div className="machine-card-meta machine-card-meta-row muted">
-                        <span className="machine-card-meta-k">{t('machines.sn')}</span>
+                      <div className="machine-card-meta machine-card-meta-row muted machine-card-meta-sn-line">
+                        <span
+                          className="machine-card-meta-k machine-card-meta-k--sn"
+                          aria-label={t('machines.sn')}
+                          title={t('machines.sn')}
+                        >
+                          <ScanCodeOutline className="machine-card-meta-sn-icon" aria-hidden />
+                        </span>
                         <span className="machine-card-meta-v">{e.snCode ?? '—'}</span>
                       </div>
                       <div className="machine-card-meta machine-card-meta-row muted machine-card-rpm-line">
-                        <span className="machine-card-meta-k">{t('machines.rpm')}</span>
+                        <span
+                          className="machine-card-meta-k machine-card-meta-k--rpm"
+                          aria-label={t('machines.rpm')}
+                          title={t('machines.rpm')}
+                        >
+                          <FanIcon
+                            size={17}
+                            className={`machine-card-rpm-icon${rpmSpinning ? '' : ' machine-card-rpm-icon--still'}`}
+                          />
+                        </span>
                         <span className="machine-card-meta-v">{formatRpm4(e.others?.speed)}</span>
                       </div>
                     </Card>

@@ -19,7 +19,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { fetchEquipments } from '../api/equipments'
 import { fetchDefectStatistics, fetchNgReasonStatistical, fetchNgRecords } from '../api/defect'
 import { rangeThisMonth, rangeThisWeek, rangeToday } from '../api/timeRange'
-import fanIcon from '../assets/icons/fan.svg'
+import FanIcon from '../components/FanIcon'
 import { resolveImageUrl } from '../utils/assetUrl'
 import { buildNgPieSlicesFromStatisticalRows } from '../utils/ngReason'
 
@@ -216,6 +216,11 @@ export default function Home() {
     setEqPickerVisible(true)
   }
 
+  const overviewFanSpinning =
+    selected != null &&
+    Number.isFinite(Number(selected.others?.speed)) &&
+    Number(selected.others?.speed) !== 0
+
   return (
     <div className="page home-page">
       <div className="page-pad home-page-pad">
@@ -272,13 +277,9 @@ export default function Home() {
               </div>
               <div className="device-overview-tile device-overview-tile--speed">
                 <div className="device-overview-speed-row">
-                  <img
-                    src={fanIcon}
-                    alt=""
-                    className="device-overview-fan-icon"
-                    width={28}
-                    height={28}
-                    decoding="async"
+                  <FanIcon
+                    size={28}
+                    className={`device-overview-fan-icon${overviewFanSpinning ? '' : ' device-overview-fan-icon--still'}`}
                   />
                   <span className="device-overview-tile-kicker device-overview-speed-label">
                     {t('home.speed')}

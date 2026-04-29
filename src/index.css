@@ -585,8 +585,13 @@ body {
 .device-overview-fan-icon {
   flex-shrink: 0;
   display: block;
+  color: #1677ff;
   animation: device-overview-fan-spin 2.4s linear infinite;
   transform-origin: 50% 50%;
+}
+
+.device-overview-fan-icon--still {
+  animation: none;
 }
 
 .defect-swiper-img-tap {
@@ -841,7 +846,7 @@ body {
 }
 
 .machine-card-shell--offline {
-  background: linear-gradient(135deg, #434343 0%, #737373 42%, #a3a3a3 100%);
+  background: #595959;
 }
 
 .machine-card-shell--offline .machine-card-inner.adm-card {
@@ -855,7 +860,7 @@ body {
 }
 
 .machine-card-shell--error {
-  background: linear-gradient(135deg, #a8071a 0%, #cf1322 40%, #ff7875 100%);
+  background: #cf1322;
 }
 
 .machine-card-shell--error .machine-card-inner.adm-card {
@@ -869,7 +874,7 @@ body {
 }
 
 .machine-card-shell--idle {
-  background: linear-gradient(135deg, #d46b08 0%, #fa8c16 45%, #ffc069 100%);
+  background: #fa8c16;
 }
 
 .machine-card-shell--idle .machine-card-inner.adm-card {
@@ -883,7 +888,7 @@ body {
 }
 
 .machine-card-shell--detect {
-  background: linear-gradient(135deg, #0958d9 0%, #1677ff 48%, #69b1ff 100%);
+  background: #1677ff;
 }
 
 .machine-card-shell--detect .machine-card-inner.adm-card {
@@ -897,7 +902,7 @@ body {
 }
 
 .machine-card-shell--default {
-  background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 55%, #f5f5f5 100%);
+  background: #f0f0f0;
 }
 
 /* 标题在 Card 的 header 内占满整行，名称左、信号右 */
@@ -983,15 +988,30 @@ body {
 }
 
 .machine-card-status-line {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
-/* 主状态角标（检测中/空闲等）：略小一档 */
-.machine-card-status-tag {
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 1.3;
-  padding: 4px 12px;
+/* 主状态：统一大号纯文案（无边框、无底色），按壳色区分字色 */
+.machine-card-status-text {
+  display: inline-block;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+}
+
+.machine-card-status-text--offline,
+.machine-card-status-text--error,
+.machine-card-status-text--detect {
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.machine-card-status-text--idle {
+  color: #ad4e00;
+}
+
+.machine-card-status-text--default {
+  color: rgba(0, 0, 0, 0.85);
 }
 
 /* 机台信息：左列标签按文案宽度（英/中文都能完整显示）、右对齐，右为数值 */
@@ -1009,16 +1029,42 @@ body {
   white-space: nowrap;
 }
 
-.machine-card-meta-k--place {
+.machine-card-meta-k--place,
+.machine-card-meta-k--sn {
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
   min-width: 1.25em;
 }
 
-.machine-card-meta-place-icon {
+.machine-card-meta-place-icon,
+.machine-card-meta-sn-icon {
   font-size: 17px;
   flex-shrink: 0;
+}
+
+.machine-card-meta-k--rpm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 1.25em;
+}
+
+.machine-card-rpm-icon {
+  flex-shrink: 0;
+  display: block;
+  color: #ffffff;
+  animation: device-overview-fan-spin 2.4s linear infinite;
+  transform-origin: 50% 50%;
+}
+
+.machine-card-shell--idle .machine-card-rpm-icon,
+.machine-card-shell--default .machine-card-rpm-icon {
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.machine-card-rpm-icon--still {
+  animation: none;
 }
 
 .machine-card-meta-v {
@@ -1028,24 +1074,10 @@ body {
   word-break: break-word;
 }
 
-/* 转数：与上一行多留空，易扫读 */
+/* 机台信息三行：相邻行间距一致（状态行下缘由 .machine-card-status-line 控制） */
+.machine-card-meta-sn-line,
 .machine-card-rpm-line {
-  margin-top: 14px;
-}
-
-.machine-card-shell--offline .machine-card-status-tag,
-.machine-card-shell--error .machine-card-status-tag,
-.machine-card-shell--detect .machine-card-status-tag {
-  --adm-color-primary: rgba(255, 255, 255, 0.95);
-  color: rgba(255, 255, 255, 0.95) !important;
-  border-color: rgba(255, 255, 255, 0.55) !important;
-  background: rgba(255, 255, 255, 0.12) !important;
-}
-
-.machine-card-shell--idle .machine-card-status-tag {
-  border-color: rgba(212, 107, 8, 0.45) !important;
-  color: #ad4e00 !important;
-  background: rgba(255, 255, 255, 0.55) !important;
+  margin-top: 8px;
 }
 
 .wifi-bars {
